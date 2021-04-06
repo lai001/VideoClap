@@ -53,6 +53,12 @@ public class VCImageTrackViewModel: NSObject, UICollectionViewDataSource, UIColl
     
     public var isSelected: Bool = false
     
+    public var cutoff: CMTime = CMTime(value: 0, timescale: 600)
+    
+    public var maskLayer: CAShapeLayer = CAShapeLayer()
+    
+    public var path: UIBezierPath = UIBezierPath()
+    
     public var cellSize: CGSize = .zero {
         didSet {
             cellConfig?.cellSizeUpdate(newCellSize: cellSize)

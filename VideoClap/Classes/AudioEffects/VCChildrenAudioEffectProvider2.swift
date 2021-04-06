@@ -55,8 +55,10 @@ public class VCChildrenAudioEffectProvider2: NSObject, VCAudioEffectProviderProt
         status = output.start()
         status = engine.start()
         status = output.render(numberFrames: UInt32(outCount.pointee), outBuffer: outBuffer)
+        status = engine.stop()
         status = engine.close()
         status = engine.uninitialize()
+        status = engine.dispose()
     }
     
 }

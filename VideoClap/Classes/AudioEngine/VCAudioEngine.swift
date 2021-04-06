@@ -92,6 +92,11 @@ public class VCAudioEngine: NSObject {
         return AUGraphClose(graph)
     }
     
+    @discardableResult public func dispose() -> OSStatus {
+        guard let graph = self.graph else { return -1 }
+        return DisposeAUGraph(graph)
+    }
+    
     @discardableResult public func start() -> OSStatus {
         guard let graph = self.graph else { return -1 }
         return AUGraphStart(graph)

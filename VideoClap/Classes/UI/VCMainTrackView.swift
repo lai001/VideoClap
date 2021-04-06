@@ -62,6 +62,13 @@ public class VCMainTrackViewLayout: UICollectionViewLayout {
     
 }
 
+public struct Quadrilateral {
+    let point0: CGPoint
+    let point1: CGPoint
+    let point2: CGPoint
+    let point3: CGPoint
+}
+
 open class VCMainTrackView: UIView, UICollectionViewDataSource, UICollectionViewDelegate, VCMainTrackViewDelegate {
     
     public weak var viewDelegate: VCMainTrackViewDelegate?
@@ -136,7 +143,29 @@ open class VCMainTrackView: UIView, UICollectionViewDataSource, UICollectionView
                     model.timeLabel.frame.origin.x = 6
                 }
                 model.collectionView.frame.size = model.frame().size
+                
                 model.reloadData(displayRect: rect)
+                
+                if let widthPerTimeVale = timeControl?.widthPerTimeVale, model.cutoff.value > 0 {
+                    let width = widthPerTimeVale * CGFloat(model.cutoff.value)
+                    let leftQuadrilateral = Quadrilateral(point0: CGPoint(x: 0, y: 0),
+                                                          point1: CGPoint(x: model.collectionView.bounds.maxX, y: 0),
+                                                          point2: CGPoint(x: model.collectionView.bounds.maxX - width, y: model.collectionView.bounds.maxY),
+                                                          point3: CGPoint(x: 0, y: model.collectionView.bounds.maxY))
+                    model.path.removeAllPoints()
+                    model.path.move(to: leftQuadrilateral.point0)
+                    model.path.addLine(to: leftQuadrilateral.point1)
+                    model.path.addLine(to: leftQuadrilateral.point2)
+                    model.path.addLine(to: leftQuadrilateral.point3)
+                    model.path.close()
+                    
+                    model.maskLayer.frame = model.collectionView.bounds
+                    model.maskLayer.path = model.path.cgPath
+                    
+                    model.collectionView.layer.mask = model.maskLayer
+                    model.collectionView.layer.masksToBounds = true
+                }
+                
                 postReloadModel(model, visibleRect: rect)
             }
         }
