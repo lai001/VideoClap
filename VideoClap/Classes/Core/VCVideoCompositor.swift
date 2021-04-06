@@ -248,33 +248,11 @@ internal class VCVideoCompositor: NSObject {
         
         var instructions: [VCVideoInstruction] = []
         var timeRanges: [CMTimeRange] = []
-        var cursor: CMTime = .zero
-        var keyTimes: [CMTime] = []
-        
-        keyTimes.append(contentsOf: imageTracks.flatMap({ [$0.timeRange.start, $0.timeRange.end] }))
-        keyTimes.append(contentsOf: videoTracks.flatMap({ [$0.timeMapping.target.start, $0.timeMapping.target.end] }))
-        keyTimes.append(contentsOf: audioTracks.flatMap({ [$0.timeMapping.target.start, $0.timeMapping.target.end] }))
-        keyTimes.append(contentsOf: transitions.flatMap({ [$0.timeRange.unsafelyUnwrapped.start, $0.timeRange.unsafelyUnwrapped.end] }))
-        
-        func removeDuplicates(times: [CMTime]) -> [CMTime] {
-            var fastEnum: [String:CMTime] = [:]
-            for item in times {
-                fastEnum["\(item.value) -- \(item.timescale)"] = item
-            }
-            return fastEnum.map({ $0.value })
-        }
-        keyTimes = removeDuplicates(times: keyTimes)
-        
-        while true {
-            let greaterThanCursorTimes = keyTimes.filter({ $0 > cursor })
-            if let minTime = greaterThanCursorTimes.min() {
-                let range = CMTimeRange(start: cursor, end: minTime)
-                timeRanges.append(range)
-                cursor = minTime
-            } else {
-                break
-            }
-        }
+        timeRanges = imageTracks.map({ $0.timeRange })
+        timeRanges += videoTracks.map({ $0.timeRange })
+        timeRanges += audioTracks.map({ $0.timeRange })
+        timeRanges += transitions.compactMap({ $0.timeRange })
+        timeRanges = VCHelper.instructionTimeRanges(of: timeRanges)
         
         (timeRanges as NSArray).enumerateObjects(options: .concurrent) { (obj: Any, _, _) in
             guard let timeRange = obj as? CMTimeRange else { return }

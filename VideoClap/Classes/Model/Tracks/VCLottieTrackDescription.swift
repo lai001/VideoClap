@@ -36,7 +36,7 @@ public class VCLottieTrackDescription: VCImageTrackDescription {
     
     public override func prepare(description: VCVideoDescription) {
         super.prepare(description: description)
-        if let path = mediaURL?.path, let animation = Animation.filepath(path), animation.duration > .zero {
+        if let path = mediaURL?.path, let animation = Animation.filepath(path, animationCache: LRUAnimationCache.sharedCache), animation.duration > .zero {
             self.animationView = AnimationView()
             self.animationView?.contentMode = self.contentMode
             self.animationView?.animation = animation
@@ -107,14 +107,20 @@ public class VCLottieTrackDescription: VCImageTrackDescription {
         defer {
             locker.object(forKey: #function).unlock()
         }
-        let group = DispatchGroup()
         var originImage: CIImage?
-        group.enter()
-        animationFrame(animationPlayTime: time) { (image) in
-            originImage = image
-            group.leave()
+        let key = (mediaURL?.path ?? "") + String(format: "%.5f", time.seconds)
+        if let cacheImage = VCImageCache.share.ciImage(forKey: key) {
+            originImage = cacheImage
+        } else {
+            let group = DispatchGroup()
+            group.enter()
+            animationFrame(animationPlayTime: time) { (image) in
+                originImage = image
+                VCImageCache.share.storeImage(toMemory: image, forKey: key)
+                group.leave()
+            }
+            group.wait()
         }
-        group.wait()
         return originImage
     }
     

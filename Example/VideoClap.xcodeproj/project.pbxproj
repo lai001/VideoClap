@@ -23,6 +23,7 @@
 		8AAF3B1F258CB26600C0F790 /* TestTrackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAF3B1E258CB26600C0F790 /* TestTrackView.swift */; };
 		8AC694902551606A00CD1D6D /* TestWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC6948F2551606A00CD1D6D /* TestWindow.swift */; };
 		8AE8760325EC8D89005526A1 /* TestTrackView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8760225EC8D89005526A1 /* TestTrackView2.swift */; };
+		8AF4DEA326186A4400509B3D /* TestParticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4DEA226186A4400509B3D /* TestParticle.swift */; };
 		8AFBD3D025F89D8500E9F22D /* LottieToGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBD3CF25F89D8500E9F22D /* LottieToGif.swift */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,7 @@
 		8AAF3B1E258CB26600C0F790 /* TestTrackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTrackView.swift; sourceTree = "<group>"; };
 		8AC6948F2551606A00CD1D6D /* TestWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestWindow.swift; sourceTree = "<group>"; };
 		8AE8760225EC8D89005526A1 /* TestTrackView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTrackView2.swift; sourceTree = "<group>"; };
+		8AF4DEA226186A4400509B3D /* TestParticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestParticle.swift; sourceTree = "<group>"; };
 		8AFBD3CF25F89D8500E9F22D /* LottieToGif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieToGif.swift; sourceTree = "<group>"; };
 		96E95A14EE0F218F43EEE3A2 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		F37C55F6C6452329825B51C3 /* Pods_VideoClap_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VideoClap_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +102,7 @@
 				8A31C81925F77FB400467376 /* MetalImageViewController.swift */,
 				8AFBD3CF25F89D8500E9F22D /* LottieToGif.swift */,
 				8A8E217225FCDDB500C1C624 /* MetalOfflineRenderTestController.swift */,
+				8AF4DEA226186A4400509B3D /* TestParticle.swift */,
 			);
 			name = "Example for VideoClap";
 			path = VideoClap;
@@ -289,6 +292,7 @@
 				8A9AACA425E51DD20042F57E /* MetalViewController.swift in Sources */,
 				8AE8760325EC8D89005526A1 /* TestTrackView2.swift in Sources */,
 				8A8E217325FCDDB500C1C624 /* MetalOfflineRenderTestController.swift in Sources */,
+				8AF4DEA326186A4400509B3D /* TestParticle.swift in Sources */,
 				8A31C81A25F77FB400467376 /* MetalImageViewController.swift in Sources */,
 				8A8CE53B255176E0002E935C /* Util.swift in Sources */,
 			);

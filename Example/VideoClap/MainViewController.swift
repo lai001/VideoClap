@@ -12,7 +12,15 @@ import Photos
 class MainViewController: UITableViewController {
 
     lazy var controllers: [UIViewController.Type] = {
-        return [ViewController.self, TestTimeScaleView.self, TestTrackView.self, MetalViewController.self, TestTrackView2.self, MetalImageViewController.self, LottieToGif.self, MetalOfflineRenderTestController.self]
+        return [ViewController.self,
+                TestTimeScaleView.self,
+                TestTrackView.self,
+                MetalViewController.self,
+                TestTrackView2.self,
+                MetalImageViewController.self,
+                LottieToGif.self,
+                MetalOfflineRenderTestController.self,
+                TestParticle.self]
     }()
     
     override func viewDidLoad() {

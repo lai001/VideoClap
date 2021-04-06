@@ -56,7 +56,11 @@ open class VCTransition: NSObject, NSCopying, NSMutableCopying {
         if _fromImage == nil {
             let compensateTimeRange = fromTrack.trackCompensateTimeRange
             if let sourceFrame = fromTrack.originImage(time: fromTrack.timeRange.end, renderSize: renderSize, renderScale: renderScale, compensateTimeRange: compensateTimeRange) {
-                _fromImage = fromTrack.compositionImage(sourceFrame: sourceFrame, compositionTime: compositionTime, renderSize: renderSize, renderScale: renderScale, compensateTimeRange: compensateTimeRange)
+                _fromImage = fromTrack.compositionImage(sourceFrame: sourceFrame,
+                                                        compositionTime: compositionTime,
+                                                        renderSize: renderSize,
+                                                        renderScale: renderScale,
+                                                        compensateTimeRange: compensateTimeRange)
             }
         }
         
@@ -64,12 +68,19 @@ open class VCTransition: NSObject, NSCopying, NSMutableCopying {
         if _toImage == nil {
             let compensateTimeRange = toTrack.trackCompensateTimeRange
             if let sourceFrame = toTrack.originImage(time: toTrack.timeRange.start, renderSize: renderSize, renderScale: renderScale, compensateTimeRange: compensateTimeRange) {
-                _toImage = toTrack.compositionImage(sourceFrame: sourceFrame, compositionTime: compositionTime, renderSize: renderSize, renderScale: renderScale, compensateTimeRange: compensateTimeRange)
+                _toImage = toTrack.compositionImage(sourceFrame: sourceFrame,
+                                                    compositionTime: compositionTime,
+                                                    renderSize: renderSize,
+                                                    renderScale: renderScale,
+                                                    compensateTimeRange: compensateTimeRange)
             }
         }
-        
+        let blackImage = VCHelper.image(color: .black, size: renderSize.scaling(renderScale))
         if let _fromImage = _fromImage, let _toImage = _toImage {
-            return transition.transition(renderSize: renderSize.scaling(renderScale), progress: Float(progress), fromImage: _fromImage, toImage: _toImage)
+            return transition.transition(renderSize: renderSize.scaling(renderScale),
+                                         progress: Float(progress),
+                                         fromImage: _fromImage.composited(over: blackImage),
+                                         toImage: _toImage.composited(over: blackImage))
         }
         return nil
     }

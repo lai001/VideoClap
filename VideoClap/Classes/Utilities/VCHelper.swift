@@ -371,6 +371,44 @@ public class VCHelper: NSObject {
         }
     }
     
+    public static func alignMemory(unalignedSize: Int, bound: Int) -> Int {
+        let alignmentMask = bound - 1
+        return (unalignedSize + alignmentMask) & ~alignmentMask
+    }
+    
+    public static func instructionTimeRanges(of timeRanges: [CMTimeRange]) -> [CMTimeRange] {
+        var keyTimes: [Double:CMTime] = [:]
+        for timeRange in timeRanges {
+            keyTimes[timeRange.start.seconds] = timeRange.start
+            keyTimes[timeRange.end.seconds] = timeRange.end
+        }
+        var cursor: CMTime = .zero
+        var _timeRanges: [CMTimeRange] = []
+        while true {
+            let greaterThanCursorTimes = keyTimes.filter({ $0.value > cursor })
+            if let minTime = greaterThanCursorTimes.min(by: { $0.value < $1.value })?.value {
+                let range = CMTimeRange(start: cursor, end: minTime)
+                _timeRanges.append(range)
+                cursor = minTime
+            } else {
+                break
+            }
+        }
+        return _timeRanges
+    }
+    
+    public static func imageWithTintColor(_ color: UIColor,
+                                          image: UIImage,
+                                          blendMode: CGBlendMode = .destinationIn) -> UIImage {
+        let renderer = VCGraphicsRenderer(image.size)
+        let _image = renderer.image { (context: CGContext) in
+            color.setFill()
+            context.fill(renderer.rendererRect)
+            image.draw(in: renderer.rendererRect, blendMode: .destinationIn, alpha: 1.0)
+        } ?? image
+        return _image
+    }
+    
 }
 
 extension VCHelper {

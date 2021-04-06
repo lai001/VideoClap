@@ -9,7 +9,7 @@ import Foundation
 import OpenGLES
 import GLKit
 
-public class GLImageView: GLKView {
+open class GLImageView: GLKView {
     
     private var ciContext: CIContext?
     
@@ -17,7 +17,7 @@ public class GLImageView: GLKView {
     
     private var renderInRect: CGRect = .zero
     
-    public var image: CIImage? {
+    open var image: CIImage? {
         didSet {
             if let _ciContext = self.ciContext, let _image = image {
                 _ciContext.draw(_image, in: renderInRect, from: _image.extent)
@@ -45,7 +45,7 @@ public class GLImageView: GLKView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         renderInRect = self.bounds.applying(.init(scaleX: renderContentScaleFactor, y: renderContentScaleFactor))
     }

@@ -20,7 +20,9 @@ public class VCTimeScaleView: UIView {
     public let timeControl: VCTimeControl
     
     internal lazy var cellModels: [VCTimeScaleCellModel] = {
-        let cells: [VCTimeScaleCellModel] = []
+        var cells: [VCTimeScaleCellModel] = (0..<10).map { (_) in
+            return VCTimeScaleCellModel()
+        }
         return cells
     }()
     
@@ -59,19 +61,23 @@ public class VCTimeScaleView: UIView {
         guard let attributes = layoutAttributesForElements(in: rect) else {
             return
         }
-        cellModels.forEach({ $0.dotLabel.removeFromSuperview(); $0.keyTimeLabel.removeFromSuperview() })
-        let newCells = attributes.map { (attribute) -> VCTimeScaleCellModel in
-            let cell = cellForItemAt(index: attribute.indexPath.item)
+        
+        let diff = attributes.count - cellModels.count
+        if diff > 0 {
+            cellModels.append(contentsOf: (0..<diff).map({ _ in return VCTimeScaleCellModel() }))
+        }
+
+        for (attribute, cell) in zip(attributes, cellModels[0..<attributes.count]) {
+            updateCell(cell, attribute: attribute)
             addSubview(cell.keyTimeLabel)
             addSubview(cell.dotLabel)
-            cell.dotLabel.sizeToFit()
-            cell.keyTimeLabel.sizeToFit()
-            cell.dotLabel.center = attribute.frame.center
-            cell.keyTimeLabel.center = CGPoint(x: attribute.frame.minX, y: attribute.frame.midY)
             delegate?.cellModel(model: cell, index: attribute.indexPath.item)
-            return cell
         }
-        cellModels = newCells
+
+        for cell in cellModels[attributes.count..<cellModels.count] {
+            cell.keyTimeLabel.removeFromSuperview()
+            cell.dotLabel.removeFromSuperview()
+        }
     }
     
     private func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -95,8 +101,8 @@ public class VCTimeScaleView: UIView {
         return attributes
     }
     
-    private func cellForItemAt(index: Int) -> VCTimeScaleCellModel {
-        let cell = VCTimeScaleCellModel()
+    private func updateCell(_ cell: VCTimeScaleCellModel, attribute: UICollectionViewLayoutAttributes) {
+        let index = attribute.indexPath.item
         let time = CMTime(value: timeControl.intervalTime.value * Int64(index), timescale: VCTimeControl.timeBase)
         
         if time.value % 600 == 0 {
@@ -111,7 +117,11 @@ public class VCTimeScaleView: UIView {
         } else {
             cell.dotLabel.isHidden = false
         }
-        return cell
+        
+        cell.dotLabel.sizeToFit()
+        cell.keyTimeLabel.sizeToFit()
+        cell.dotLabel.center = attribute.frame.center
+        cell.keyTimeLabel.center = CGPoint(x: attribute.frame.minX, y: attribute.frame.midY)
     }
     
     private func format(time: CMTime) -> String {

@@ -5,30 +5,24 @@
 //  Created by lai001 on 2021/1/23.
 //
 
-import SSPlayer
 import AVFoundation
 
 open class VCPlayerContainerView: UIView, VCRealTimeRenderTarget, AVPlayerItemOutputPullDelegate {
     
     open var compositorClass: VCVideoCompositing.Type? = VCVideoCompositing.self
     
-    public weak var player: VCPlayer? {
-        didSet {
-            playerView.player = player
-        }
-    }
+    public weak var player: VCPlayer?
     
     private var displayLinkProxy: CADisplayLinkProxy?
     
     private var playerItemVideoOutput: AVPlayerItemVideoOutput?
     
-    private lazy var playerView: SSPlayerView = {
-        let playerView = SSPlayerView(player: player)
-        return playerView
-    }()
-    
-    private lazy var renderView: GLImageView = {
-        let view = GLImageView(frame: .zero)
+    private lazy var renderView: VCVideoOutputRenderer = {
+        #if targetEnvironment(simulator)
+        let view = VCVideoOutputMetalRenderView(frame: .zero)
+        #else
+        let view = VCVideoOutputGLRenderView(frame: .zero)
+        #endif
         return view
     }()
     
@@ -39,7 +33,6 @@ open class VCPlayerContainerView: UIView, VCRealTimeRenderTarget, AVPlayerItemOu
     public init(frame: CGRect, player: VCPlayer? = nil) {
         self.player = player
         super.init(frame: frame)
-        _ = playerView
         addSubview(renderView)
     }
     
@@ -48,14 +41,12 @@ open class VCPlayerContainerView: UIView, VCRealTimeRenderTarget, AVPlayerItemOu
     }
     
     deinit {
-        playerView.player = nil
         stopTimer()
     }
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        playerView.frame = fitRect()
-        renderView.frame = playerView.frame
+        renderView.frame = fitRect()
     }
     
     func stopTimer() {
@@ -82,8 +73,9 @@ open class VCPlayerContainerView: UIView, VCRealTimeRenderTarget, AVPlayerItemOu
         guard let videoOutput = playerItemVideoOutput else { return }
         let hostTime = link.timestamp + link.duration
         let itemTime = videoOutput.itemTime(forHostTime: hostTime)
-        if videoOutput.hasNewPixelBuffer(forItemTime: itemTime), let pixelBuffer = videoOutput.copyPixelBuffer(forItemTime: itemTime, itemTimeForDisplay: nil) {
-            renderView.image = CIImage(cvPixelBuffer: pixelBuffer)
+        if videoOutput.hasNewPixelBuffer(forItemTime: itemTime),
+           let pixelBuffer = videoOutput.copyPixelBuffer(forItemTime: itemTime, itemTimeForDisplay: nil) {
+            renderView.pixelBuffer = pixelBuffer
         }
     }
     
@@ -98,7 +90,7 @@ open class VCPlayerContainerView: UIView, VCRealTimeRenderTarget, AVPlayerItemOu
     }
     
     public func didReplacePlayerItem(_ playerItem: AVPlayerItem?) {
-        guard playerView.player != nil else {
+        guard player != nil else {
             return
         }
         stopTimer()

@@ -25,7 +25,11 @@ public class CADisplayLinkProxy {
     public init(handle: ((CADisplayLink) -> Void)?) {
         self.handle = handle
         displaylink = CADisplayLink(target: self, selector: #selector(updateHandle))
-        displaylink?.add(to: RunLoop.current, forMode: .common)
+        add()
+    }
+    
+    deinit {
+        invalidate()
     }
 
     @objc func updateHandle(_ link: CADisplayLink) {
@@ -33,8 +37,14 @@ public class CADisplayLinkProxy {
     }
 
     public func invalidate() {
+        displaylink?.isPaused = true
         displaylink?.remove(from: RunLoop.current, forMode: .common)
         displaylink?.invalidate()
         displaylink = nil
     }
+    
+    public func add(to runloop: RunLoop = .current, forMode mode: RunLoop.Mode = .default) {
+        displaylink?.add(to: runloop, forMode: mode)
+    }
+    
 }

@@ -6,10 +6,15 @@
 //
 
 import Foundation
+import CoreMedia
 
-public class VCParticleSystem: NSObject {
+open class VCParticleSystem: NSObject {
     
     public var emitters: [VCParticleEmitter] = []
+    
+    public var timeRange: CMTimeRange = .zero
+    
+    public var time: CMTime = .zero
     
     public override init() {
         super.init()

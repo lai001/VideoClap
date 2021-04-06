@@ -6,25 +6,41 @@
 //
 
 import Foundation
+import CoreMedia
 
-public class VCBaseParticle: NSObject {
+open class VCBaseParticle: NSObject {
     
-    public var position: CGPoint = CGPoint()
+    public var position: VCParticleProperty<CGPoint> = VCParticleProperty(initValue: CGPoint())
     
-    public var xRate: CGFloat = 0
+    public var startColor: UIColor = .black
     
-    public var yRate: CGFloat = 0
+    public var endColor: UIColor = .black
     
-    public var start: TimeInterval = 0
+    public var color: UIColor = .black
     
-    public var end: TimeInterval = 0
+    public var acceleration: simd_float2 = simd_float2()
+    
+    public var timeRange: CMTimeRange = .zero
     
     public func reset() {
-        
+        position.value = position.initValue
+        color = .black
     }
     
-    public func update(progress: TimeInterval) {
+    public func update(systemTime: CMTime) {
+        let x = CGFloat(systemTime.seconds - timeRange.start.seconds) * CGFloat(acceleration.x) + position.initValue.x
+        let y = CGFloat(systemTime.seconds - timeRange.start.seconds) * CGFloat(acceleration.y) + position.initValue.y
+        position.value = CGPoint(x: x, y: y)
         
+        let progress = (systemTime.seconds - timeRange.start.seconds) / timeRange.duration.seconds
+        
+        let startCIColor = CIColor(color: startColor)
+        let endCIColor = CIColor(color: endColor)
+        
+        let red = startCIColor.red + (endCIColor.red - startCIColor.red) * CGFloat(progress)
+        let blue = startCIColor.blue + (endCIColor.blue - startCIColor.blue) * CGFloat(progress)
+        let green = startCIColor.green + (endCIColor.green - startCIColor.green) * CGFloat(progress)
+        let alpha = startCIColor.alpha + (endCIColor.alpha - startCIColor.alpha) * CGFloat(progress)
+        color = UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
-    
 }

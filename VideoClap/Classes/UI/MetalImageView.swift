@@ -10,14 +10,14 @@ import Metal
 import MetalKit
 import AVFoundation
 
-public class MetalImageView: MTKView {
+open class MetalImageView: MTKView {
     
     public enum ContentMode {
         case scaleAspectFit
         case scaleToFill
     }
     
-    public var image: CIImage? {
+    open var image: CIImage? {
         didSet {
             if let image = self.image {
                 if let texture = cacheOrNewTexture(size: image.extent.size) {
@@ -144,7 +144,7 @@ public class MetalImageView: MTKView {
                                                     options: [])
     }
     
-    func cacheOrNewTexture(size: CGSize) -> MTLTexture? {
+    public func cacheOrNewTexture(size: CGSize) -> MTLTexture? {
         if let _texture = self.texture {
             if _texture.height == Int(size.height) && _texture.width == Int(size.width) {
                 
@@ -157,7 +157,7 @@ public class MetalImageView: MTKView {
         return self.texture
     }
     
-    public func redraw() {
+    open func redraw() {
         draw(in: self)
     }
     
@@ -165,11 +165,11 @@ public class MetalImageView: MTKView {
 
 extension MetalImageView: MTKViewDelegate {
     
-    public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+    open func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         
     }
     
-    public func draw(in view: MTKView) {
+    open func draw(in view: MTKView) {
         guard let drawable = view.currentDrawable else { return }
         guard let renderPassDescriptor = view.currentRenderPassDescriptor else { return }
         renderPassDescriptor.depthAttachment.loadAction = .dontCare
